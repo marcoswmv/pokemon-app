@@ -7,28 +7,15 @@
 
 import UIKit
 
-typealias ErrorMessageHandlingBlock = ((String) -> Void)
-typealias ImageRequestCompletionBlock = (Result<UIImage, Error>) -> Void
-typealias PokemonResponseBlock = (Result<PokemonResponse, Error>) -> Void
-
-private enum NetworkResult<Error> {
-    case success
-    case failure(Error)
-}
-
-private enum NetworkResponse: Error {
-    case success
-    case badRequest
-    case outdated
-    case failed
-    case unableToDecode(description: String)
-}
-
 protocol Networking { }
 
 extension Networking {
-    func requestProducts(url: URL?, _ completionHandler: @escaping PokemonResponseBlock) {
-        NetworkService.shared.requestProducts(url: url, completionHandler)
+    func requestPokemonsList(page: Int, _ completionHandler: @escaping PokemonsListResponseBlock) {
+        NetworkService.shared.request(page: page, urlString: Text.pokemonsListUrlString, completionHandler)
+    }
+
+    func requestPokemon(by urlString: String, _ completionHandler: @escaping PokemonResponseBlock) {
+        NetworkService.shared.request(urlString: urlString, completionHandler)
     }
 }
 
@@ -49,10 +36,16 @@ private class NetworkService {
 }
 
 extension NetworkService {
-    func requestProducts(url: URL?, _ completionHandler: @escaping PokemonResponseBlock) {
-        guard let url = url else {
+    func request<T: Codable>(page: Int? = nil, urlString: String? = nil, _ completionHandler: @escaping (Result<T, Error>) -> Void) {
+
+        guard let urlString = urlString,
+              var url = URL(string: urlString) else {
             completionHandler(.failure(NetworkResponse.badRequest))
             return
+        }
+
+        if let page = page {
+            url.appendQueryItem(name: "offset", value: page.description)
         }
 
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
@@ -68,10 +61,9 @@ extension NetworkService {
                 switch result {
                 case .success:
                     if let data = data {
-                        print("RESPONSE: \(String.init(data: data, encoding: .utf8))")
                         do {
-                            let productsResponse = try JSONDecoder().decode(PokemonResponse.self, from: data)
-                            completionHandler(.success(products))
+                            let responseData = try JSONDecoder().decode(T.self, from: data)
+                            completionHandler(.success(responseData))
                         } catch {
                             completionHandler(.failure(NetworkResponse.unableToDecode(description: error.localizedDescription)))
                         }
@@ -83,4 +75,17 @@ extension NetworkService {
         }
         task.resume()
     }
+}
+
+private enum NetworkResult<Error> {
+    case success
+    case failure(Error)
+}
+
+private enum NetworkResponse: Error {
+    case success
+    case badRequest
+    case outdated
+    case failed
+    case unableToDecode(description: String)
 }
