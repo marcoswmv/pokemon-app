@@ -95,7 +95,7 @@ class PokemonTableViewCell: UITableViewCell {
 extension PokemonTableViewCell {
     func fill(with viewModel: PokemonCellViewModel) {
         loaderView.startAnimating()
-        downloadTask = pictureImageView.kf.setImage(with: viewModel.imageUrl, options: [.fromMemoryCacheOrRefresh], completionHandler: { _ in
+        downloadTask = pictureImageView.kf.setImage(with: viewModel.imageUrl, options: [.loadDiskFileSynchronously], completionHandler: { _ in
             self.loaderView.stopAnimating()
         })
         nameLabel.text = viewModel.name.uppercased()
