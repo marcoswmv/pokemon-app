@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import Kingfisher
 
 class DetailViewController: UIViewController {
+
+    private let viewModel: DetailViewModel
 
     private lazy var pictureImageView: UIImageView = {
         let imageView = UIImageView()
@@ -24,34 +27,56 @@ class DetailViewController: UIViewController {
         return label
     }()
 
+    init(viewModel: DetailViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        layoutViews()
+        bindViewModel()
+        viewModel.fetchPokemon()
     }
 
     private func setupUI() {
         view.backgroundColor = .systemBackground
 
-        view.addSubview(nameLabel)
         view.addSubview(pictureImageView)
 
-        nameLabel.text = "Ditto"
-        pictureImageView.image = UIImage(named: "ditto")
+        makeConstraints()
     }
 
-    private func layoutViews() {
-        pictureImageView.frame = CGRect(origin: .zero,
-                                        size: CGSize(width: Appearance.screenSize.width - (Appearance.contentSpacement * 2),
-                                                     height: Appearance.screenSize.height - (Appearance.contentSpacement * 2)))
-        pictureImageView.center = view.center
+    private func makeConstraints() {
+        pictureImageView.snp.makeConstraints { make in
+            make.size.equalTo(Appearance.detailImageSize)
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(100.0)
+        }
+    }
 
-        nameLabel.frame = CGRect(origin: .zero,
-                                 size: CGSize(width: Appearance.screenSize.width - (Appearance.contentSpacement * 2),
-                                              height: Appearance.nameLabelHeight))
-        nameLabel.center = CGPoint(x: Appearance.screenSize.width / 2,
-                                   y: Appearance.screenSize.height - (Appearance.screenSize.height * 0.85))
-        nameLabel.sizeToFit()
+    private func bindViewModel() {
+        viewModel.pokemon.bind { pokemon in
+            guard let pokemon = pokemon,
+                  let imageUrlString = pokemon.sprites.other?.officialArtwork.frontDefault,
+                  let imageUrl = URL(string: imageUrlString) else { return }
+
+            DispatchQueue.main.async {
+                self.title = pokemon.name.uppercased()
+                self.pictureImageView.kf.setImage(with: imageUrl)
+            }
+        }
+
+        viewModel.error.bind { error in
+            guard let error = error else { return }
+            DispatchQueue.main.async {
+                self.showAlert(with: error.localizedDescription)
+            }
+        }
     }
 }
 

@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		F7E41E5C28C763C200D781C7 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F7E41E5B28C763C200D781C7 /* Kingfisher */; };
+		F7E41E5F28C7F1E400D781C7 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F7E41E5E28C7F1E400D781C7 /* SnapKit */; };
+		F7E41E6128C804B400D781C7 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E41E6028C804B400D781C7 /* UIViewController+Extension.swift */; };
+		F7E41E6328C8163A00D781C7 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E41E6228C8163A00D781C7 /* DetailViewModel.swift */; };
 		F7EB76FC28C67BCB0062036F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB76FB28C67BCB0062036F /* AppDelegate.swift */; };
 		F7EB76FE28C67BCB0062036F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB76FD28C67BCB0062036F /* SceneDelegate.swift */; };
 		F7EB770028C67BCB0062036F /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB76FF28C67BCB0062036F /* DetailViewController.swift */; };
@@ -25,7 +28,6 @@
 		F7EB772928C6B53C0062036F /* URL+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB772828C6B53C0062036F /* URL+Extension.swift */; };
 		F7EB772D28C6B9030062036F /* PokemonCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB772C28C6B9030062036F /* PokemonCellViewModel.swift */; };
 		F7EB773228C6B9D10062036F /* PokemonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB773028C6B9D10062036F /* PokemonTableViewCell.swift */; };
-		F7EB773328C6B9D10062036F /* PokemonTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7EB773128C6B9D10062036F /* PokemonTableViewCell.xib */; };
 		F7EB773528C6BC730062036F /* UITableViewCell+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB773428C6BC730062036F /* UITableViewCell+Extension.swift */; };
 		F7EB773728C6BF850062036F /* ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB773628C6BF850062036F /* ListViewModel.swift */; };
 		F7EB773928C6C0090062036F /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EB773828C6C0090062036F /* Observable.swift */; };
@@ -33,6 +35,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F7E41E6028C804B400D781C7 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
+		F7E41E6228C8163A00D781C7 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
 		F7EB76F828C67BCB0062036F /* PokemonAPI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokemonAPI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7EB76FB28C67BCB0062036F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F7EB76FD28C67BCB0062036F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -52,7 +56,6 @@
 		F7EB772828C6B53C0062036F /* URL+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 		F7EB772C28C6B9030062036F /* PokemonCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonCellViewModel.swift; sourceTree = "<group>"; };
 		F7EB773028C6B9D10062036F /* PokemonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonTableViewCell.swift; sourceTree = "<group>"; };
-		F7EB773128C6B9D10062036F /* PokemonTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PokemonTableViewCell.xib; sourceTree = "<group>"; };
 		F7EB773428C6BC730062036F /* UITableViewCell+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Extension.swift"; sourceTree = "<group>"; };
 		F7EB773628C6BF850062036F /* ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewModel.swift; sourceTree = "<group>"; };
 		F7EB773828C6C0090062036F /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
@@ -65,6 +68,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7E41E5C28C763C200D781C7 /* Kingfisher in Frameworks */,
+				F7E41E5F28C7F1E400D781C7 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				F7EB773428C6BC730062036F /* UITableViewCell+Extension.swift */,
+				F7E41E6028C804B400D781C7 /* UIViewController+Extension.swift */,
 				F7EB772828C6B53C0062036F /* URL+Extension.swift */,
 			);
 			path = Extensions;
@@ -182,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				F7EB773628C6BF850062036F /* ListViewModel.swift */,
+				F7E41E6228C8163A00D781C7 /* DetailViewModel.swift */,
 				F7EB772C28C6B9030062036F /* PokemonCellViewModel.swift */,
 			);
 			path = "View Models";
@@ -200,7 +206,6 @@
 			isa = PBXGroup;
 			children = (
 				F7EB773028C6B9D10062036F /* PokemonTableViewCell.swift */,
-				F7EB773128C6B9D10062036F /* PokemonTableViewCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -223,6 +228,7 @@
 			name = PokemonAPI;
 			packageProductDependencies = (
 				F7E41E5B28C763C200D781C7 /* Kingfisher */,
+				F7E41E5E28C7F1E400D781C7 /* SnapKit */,
 			);
 			productName = PokemonAPI;
 			productReference = F7EB76F828C67BCB0062036F /* PokemonAPI.app */;
@@ -254,6 +260,7 @@
 			mainGroup = F7EB76EF28C67BCB0062036F;
 			packageReferences = (
 				F7E41E5A28C763C200D781C7 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				F7E41E5D28C7F1E400D781C7 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			productRefGroup = F7EB76F928C67BCB0062036F /* Products */;
 			projectDirPath = "";
@@ -270,7 +277,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7EB770828C67BCC0062036F /* LaunchScreen.storyboard in Resources */,
-				F7EB773328C6B9D10062036F /* PokemonTableViewCell.xib in Resources */,
 				F7EB770528C67BCC0062036F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -290,6 +296,7 @@
 				F7EB773928C6C0090062036F /* Observable.swift in Sources */,
 				F7EB773228C6B9D10062036F /* PokemonTableViewCell.swift in Sources */,
 				F7EB76FC28C67BCB0062036F /* AppDelegate.swift in Sources */,
+				F7E41E6128C804B400D781C7 /* UIViewController+Extension.swift in Sources */,
 				F7EB76FE28C67BCB0062036F /* SceneDelegate.swift in Sources */,
 				F7EB771628C6837C0062036F /* Appearance.swift in Sources */,
 				F7EB772528C6A76E0062036F /* Pokemon.swift in Sources */,
@@ -297,6 +304,7 @@
 				F7EB772928C6B53C0062036F /* URL+Extension.swift in Sources */,
 				F7EB772328C6A6490062036F /* PokemonType.swift in Sources */,
 				F7EB772D28C6B9030062036F /* PokemonCellViewModel.swift in Sources */,
+				F7E41E6328C8163A00D781C7 /* DetailViewModel.swift in Sources */,
 				F7EB771F28C6A61A0062036F /* Ability.swift in Sources */,
 				F7EB772728C6B1360062036F /* Text.swift in Sources */,
 				F7EB771828C685260062036F /* ListViewController.swift in Sources */,
@@ -368,7 +376,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -422,7 +430,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -446,6 +454,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -473,6 +482,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -518,6 +528,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		F7E41E5D28C7F1E400D781C7 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -525,6 +543,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F7E41E5A28C763C200D781C7 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		F7E41E5E28C7F1E400D781C7 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F7E41E5D28C7F1E400D781C7 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

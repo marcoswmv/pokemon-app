@@ -7,13 +7,21 @@
 
 import UIKit
 
-class ListViewController: UIViewController {
+final class ListViewController: UIViewController {
 
     // MARK: Properties
     private let viewModel: ListViewModel = ListViewModel()
-    private var sortUp: Bool = false
 
     // MARK: UI Elements
+    private lazy var sortingButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(Text.sortButtonTitle, for: .normal)
+        button.setTitleColor(UIColor.systemBlue, for: .normal)
+        button.setImage(Appearance.descendingIcon, for: .normal)
+        button.sizeToFit()
+        return button
+    }()
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
@@ -26,17 +34,22 @@ class ListViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-        viewModel.fetch(for: 0)
+        viewModel.fetchPokemonsList()
     }
 
     private func setupUI() {
+        view.backgroundColor = .systemBackground
+
         title = Text.listTitleLabel.uppercased()
 
-        let sortButton = UIBarButtonItem(title: Text.sortButtonTitle, style: .plain, target: self, action: #selector(handleSorting))
-        self.navigationItem.rightBarButtonItem = sortButton
-
-        view.backgroundColor = .systemBackground
+        setupNavigationBarButton()
         setupTableView()
+    }
+
+    private func setupNavigationBarButton() {
+        sortingButton.addTarget(self, action: #selector(handleSorting), for: .touchUpInside)
+        let sortButton = UIBarButtonItem(customView: sortingButton)
+        navigationItem.rightBarButtonItem = sortButton
     }
 
     private func setupTableView() {
@@ -48,17 +61,28 @@ class ListViewController: UIViewController {
                                  height: Appearance.screenSize.height)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(PokemonTableViewCell.nib(), forCellReuseIdentifier: PokemonTableViewCell.identifier)
+        tableView.register(PokemonTableViewCell.self, forCellReuseIdentifier: PokemonTableViewCell.identifier)
     }
 
-    @objc func handleSorting() {
-        sortUp.toggle()
-        viewModel.items.value?.sort(by: { sortUp ? $0 < $1 : $0 > $1 })
-        reloadTableView()
+    @objc private func handleSorting() {
+        viewModel.sortList()
     }
 
-    func bindViewModel() {
+    private func bindViewModel() {
         viewModel.items.bind { _ in
+            self.reloadTableView()
+        }
+
+        viewModel.error.bind { error in
+            guard let error = error else { return }
+            DispatchQueue.main.async {
+                self.showAlert(with: error.localizedDescription)
+            }
+        }
+
+        viewModel.sorting.bind { sort in
+            guard let sort = sort else { return }
+            self.sortingButton.setImage(sort ? Appearance.ascendingIcon : Appearance.descendingIcon, for: .normal)
             self.reloadTableView()
         }
     }
@@ -72,9 +96,21 @@ class ListViewController: UIViewController {
 
 // MARK: - Table View data source and delegate
 extension ListViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let lastIndex = (viewModel.items.value?.endIndex ?? 0) - 4
+        if lastIndex >= 0, indexPath.row == lastIndex {
+            viewModel.paginateList()
+        }
+    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        // TODO: Navigate to detail view
+        if let viewModels = viewModel.items.value,
+           let pokemonModel = self.viewModel.getModel(by: viewModels[indexPath.row].id) {
+            let detailViewModel = DetailViewModel(pokemonId: pokemonModel.id)
+            let detailViewController = DetailViewController(viewModel: detailViewModel)
+            navigationController?.pushViewController(detailViewController, animated: true)
+        }
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

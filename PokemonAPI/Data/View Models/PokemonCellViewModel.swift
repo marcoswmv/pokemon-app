@@ -9,9 +9,10 @@ import Foundation
 
 struct PokemonCellViewModel: Comparable {
 
+    let id: Int
     let name: String
     let order: Int
-    let imageUrlString: String
+    let imageUrl: URL
 
     static func < (lhs: PokemonCellViewModel, rhs: PokemonCellViewModel) -> Bool {
         lhs.order < rhs.order

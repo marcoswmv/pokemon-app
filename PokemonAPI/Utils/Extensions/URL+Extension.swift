@@ -10,15 +10,8 @@ import Foundation
 extension URL {
 
     mutating func appendQueryItem(name: String, value: String?) {
-
-        guard var urlComponents = URLComponents(string: absoluteString),
-              var queryItems = urlComponents.queryItems else { return }
-
-        let queryItem = URLQueryItem(name: name, value: value)
-
-        queryItems.append(queryItem)
-        urlComponents.queryItems = queryItems
-        
+        guard var urlComponents = URLComponents(string: absoluteString) else { return }
+        urlComponents.queryItems = [URLQueryItem(name: name, value: value)]
         self = urlComponents.url!
     }
 }

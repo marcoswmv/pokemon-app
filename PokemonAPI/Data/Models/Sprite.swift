@@ -18,9 +18,11 @@ struct Sprite: Codable {
 }
 
 struct Other: Codable {
+    let dreamWorld: OfficialArtwork
     let officialArtwork: OfficialArtwork
 
     enum CodingKeys: String, CodingKey {
+        case dreamWorld = "dream_world"
         case officialArtwork = "official-artwork"
     }
 }

@@ -11,11 +11,15 @@ protocol Networking { }
 
 extension Networking {
     func requestPokemonsList(page: Int, _ completionHandler: @escaping PokemonsListResponseBlock) {
-        NetworkService.shared.request(page: page, urlString: Text.pokemonsListUrlString, completionHandler)
+        NetworkService.shared.request(page: page, completionHandler)
     }
 
     func requestPokemon(by urlString: String, _ completionHandler: @escaping PokemonResponseBlock) {
         NetworkService.shared.request(urlString: urlString, completionHandler)
+    }
+
+    func requestPokemon(by id: Int, _ completionHandler: @escaping PokemonResponseBlock) {
+        NetworkService.shared.request(endpoint: "\(id)", completionHandler)
     }
 }
 
@@ -36,12 +40,20 @@ private class NetworkService {
 }
 
 extension NetworkService {
-    func request<T: Codable>(page: Int? = nil, urlString: String? = nil, _ completionHandler: @escaping (Result<T, Error>) -> Void) {
+    func request<T: Codable>(page: Int? = nil, urlString: String? = nil, endpoint: String? = nil, _ completionHandler: @escaping (Result<T, Error>) -> Void) {
+        
+        var url: URL? = nil
 
-        guard let urlString = urlString,
-              var url = URL(string: urlString) else {
-            completionHandler(.failure(NetworkResponse.badRequest))
-            return
+        if let urlString = urlString {
+            url = URL(string: urlString)
+        } else {
+            url = URL(string: Text.pokemonsListUrlString)
+        }
+
+        guard var url = url else { return }
+
+        if let endpoint = endpoint {
+            url.appendPathComponent(endpoint)
         }
 
         if let page = page {
