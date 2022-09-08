@@ -25,6 +25,10 @@ extension Networking {
     func requestDescription(by urlString: String, _ completionHandler: @escaping DescriptionResponseBlock) {
         NetworkService.shared.request(urlString: urlString, completionHandler)
     }
+
+    func uploadPokemon(urlString: String? = nil, bodyData: Data? = nil, _ completionHandler: @escaping PokemonResponseBlock) {
+        NetworkService.shared.request(urlString: urlString, bodyData: bodyData, method: .post, completionHandler)
+    }
 }
 
 final private class NetworkService {
@@ -44,8 +48,12 @@ final private class NetworkService {
 }
 
 extension NetworkService {
-    func request<T: Codable>(page: Int? = nil, urlString: String? = nil, endpoint: String? = nil, _ completionHandler: @escaping (Result<T, Error>) -> Void) {
-        
+    func request<T: Codable>(page: Int? = nil,
+                             urlString: String? = nil,
+                             endpoint: String? = nil,
+                             bodyData: Data? = nil,
+                             method: RequestMethod = .get,
+                             _ completionHandler: @escaping (Result<T, Error>) -> Void) {
         var url: URL? = nil
 
         if let urlString = urlString {
@@ -64,32 +72,41 @@ extension NetworkService {
             url.appendQueryItem(name: "offset", value: page.description)
         }
 
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let self = self else { return }
+        var urlRequest = URLRequest(url: url, cachePolicy: .reloadRevalidatingCacheData)
+        urlRequest.httpMethod = method.rawValue
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-type")
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+        urlRequest.httpBody = bodyData
 
-            if let error = error {
-                completionHandler(.failure(error))
-            }
-
-            if let response = response as? HTTPURLResponse {
-                let result = self.handleNetworkResponse(response)
-
-                switch result {
-                case .success:
-                    if let data = data {
-                        do {
-                            let responseData = try JSONDecoder().decode(T.self, from: data)
-                            completionHandler(.success(responseData))
-                        } catch {
-                            completionHandler(.failure(NetworkResponse.unableToDecode(description: error.localizedDescription)))
-                        }
-                    }
-                case .failure(let error):
-                    completionHandler(.failure(error))
-                }
-            }
+        let task = URLSession.shared.dataTask(with: urlRequest) { [weak self] data, response, error in
+            guard let `self` = self else { return }
+            self.handleResponse(with: data, response, error, completionHandler)
         }
         task.resume()
+    }
+
+    private func handleResponse<T: Codable>(with data: Data?, _ response: URLResponse?, _ error: Error?, _ completionHandler: @escaping (Result<T, Error>) -> Void) {
+        if let error = error {
+            completionHandler(.failure(error))
+        }
+
+        if let response = response as? HTTPURLResponse {
+            let result = self.handleNetworkResponse(response)
+
+            switch result {
+            case .success:
+                if let data = data {
+                    do {
+                        let responseData = try JSONDecoder().decode(T.self, from: data)
+                        completionHandler(.success(responseData))
+                    } catch {
+                        completionHandler(.failure(NetworkResponse.unableToDecode(description: error.localizedDescription)))
+                    }
+                }
+            case .failure(let error):
+                completionHandler(.failure(error))
+            }
+        }
     }
 }
 
@@ -108,4 +125,9 @@ private enum NetworkResponse: Error {
 
 enum AppError: Error {
     case unableToDecode
+}
+
+private enum RequestMethod: String {
+    case get = "GET"
+    case post = "POST"
 }

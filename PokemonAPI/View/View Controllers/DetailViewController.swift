@@ -12,6 +12,14 @@ final class DetailViewController: UIViewController {
 
     private let viewModel: DetailViewModel
 
+    private lazy var loaderView: UIActivityIndicatorView = {
+        UIActivityIndicatorView(style: .large)
+    }()
+
+    private lazy var headerContentView: UIView = {
+        UIView()
+    }()
+
     private lazy var pictureImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -41,24 +49,41 @@ final class DetailViewController: UIViewController {
         viewModel.fetchPokemon()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loaderView.startAnimating()
+    }
+
     private func setupUI() {
         view.backgroundColor = .systemBackground
 
-        view.addSubview(pictureImageView)
+        headerContentView.frame = CGRect(x: 0,
+                                         y: 0,
+                                         width: tableView.frame.width,
+                                         height: Appearance.detailImageSize)
+
+        headerContentView.addSubview(pictureImageView)
+        tableView.tableHeaderView = headerContentView
         view.addSubview(tableView)
+        view.addSubview(loaderView)
 
         makeConstraints()
     }
     
     private func makeConstraints() {
+        loaderView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+
         pictureImageView.snp.makeConstraints { make in
             make.size.equalTo(Appearance.detailImageSize)
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(100.0)
+            make.centerY.equalToSuperview()
         }
 
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(pictureImageView.snp.bottom).offset(5.0)
+            make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
@@ -72,20 +97,15 @@ final class DetailViewController: UIViewController {
     }
 
     private func bindViewModel() {
-        viewModel.pokemon.bind { pokemon in
-            guard let pokemon = pokemon,
-                  let imageUrlString = pokemon.sprites.other?.officialArtwork.frontDefault,
-                  let imageUrl = URL(string: imageUrlString) else { return }
+        viewModel.pokemonViewModel.bind { pokemon in
+            guard let pokemon = pokemon else { return }
 
             DispatchQueue.main.async {
                 self.title = pokemon.name.uppercased()
-                self.pictureImageView.kf.setImage(with: imageUrl)
+                self.pictureImageView.kf.setImage(with: pokemon.imageUrl)
+                self.loaderView.stopAnimating()
+                self.tableView.reloadData()
             }
-        }
-
-        viewModel.description.bind { desc in
-            guard desc != nil else { return }
-            self.reloadTableView()
         }
 
         viewModel.error.bind { error in
@@ -95,12 +115,6 @@ final class DetailViewController: UIViewController {
             }
         }
     }
-
-    private func reloadTableView() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
-    }
 }
 
 // MARK: - Description table view Data source and Delegate
@@ -108,11 +122,11 @@ final class DetailViewController: UIViewController {
 extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        viewModel.description.value?.count ?? 0
+        viewModel.pokemonViewModel.value?.description.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let descriptionArray = viewModel.description.value else { return nil }
+        guard let descriptionArray = viewModel.pokemonViewModel.value?.description else { return nil }
 
         let contentView = UIView()
         contentView.backgroundColor = .systemGray6
@@ -132,7 +146,7 @@ extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let descriptionArray = viewModel.description.value else { return 0 }
+        guard let descriptionArray = viewModel.pokemonViewModel.value?.description else { return 0 }
         return descriptionArray[section].1.count
     }
 
@@ -141,7 +155,7 @@ extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
 
-        if let descriptionArray = viewModel.description.value {
+        if let descriptionArray = viewModel.pokemonViewModel.value?.description {
             let text = descriptionArray[indexPath.section].1[indexPath.row]
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.lineBreakMode = .byWordWrapping

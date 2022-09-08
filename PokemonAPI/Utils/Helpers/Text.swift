@@ -9,9 +9,10 @@ import Foundation
 
 struct Text {
     static let pokemonsListUrlString = "https://pokeapi.co/api/v2/pokemon/"
+    static let dummyAPI = "https://jsonplaceholder.typicode.com/posts"
 
     static let listTitleLabel = "Pokemons"
-    static let sortButtonTitle = "Sort"
+    static let sortButtonTitle = "Sort by order"
 
     static let errorAlertButtonTitle = "Ok"
     static let errorAlertTitle = "Error"

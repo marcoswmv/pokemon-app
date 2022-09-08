@@ -7,27 +7,27 @@
 
 import UIKit
 
-final class DetailViewModel: Networking {
+struct PokemonViewModel {
+    let name: String
+    let imageUrl: URL?
+    let description: [(String, [String])]
+}
 
-    let pokemonQueue = DispatchQueue(label: "CacheQueue")
+final class DetailViewModel: Networking {
 
     private let pokemonDispatchGroup: DispatchGroup = DispatchGroup()
     private let dispatchGroup: DispatchGroup = DispatchGroup()
 
     private let pokemonId: Int
+    private var pokemon: Pokemon? = nil
     private var abilities: [String] = []
     private var moves: [String] = []
 
-    var pokemon: Observable<Pokemon> = Observable(nil)
-    let description: Observable<[(String, [String])]> = Observable(nil)
+    var pokemonViewModel: Observable<PokemonViewModel> = Observable(nil)
     var error: Observable<Error> = Observable(nil)
 
     init(pokemonId: Int) {
         self.pokemonId = pokemonId
-    }
-
-    deinit {
-        print(self)
     }
 
     func fetchPokemon() {
@@ -36,7 +36,7 @@ final class DetailViewModel: Networking {
             guard let self = self else { return }
             switch result {
             case .success(let pokemon):
-                self.pokemon.value = pokemon
+                self.pokemon = pokemon
             case .failure(let error):
                 self.error.value = error
             }
@@ -49,7 +49,7 @@ final class DetailViewModel: Networking {
     }
 
     private func fetchPokemonsDescription() {
-        guard let pokemon = pokemon.value else { return }
+        guard let pokemon = pokemon else { return }
 
         fetchAbilities(for: pokemon)
         fetchMoves(for: pokemon)
@@ -96,25 +96,27 @@ final class DetailViewModel: Networking {
     }
 
     private func processDescription() {
-        guard let pokemon = pokemon.value else { return }
+        guard let pokemon = pokemon,
+              let imageUrlString = pokemon.sprites.other?.officialArtwork.frontDefault else { return }
         
         let abilities: [String] = abilities.prefix(6).map { $0.replacingOccurrences(of: "\n", with: " ") }
         let types: [String] = pokemon.types.prefix(6).map { $0.type.name.capitalizingFirstLetter() }
         let moves: [String] = moves.prefix(6).map { $0.replacingOccurrences(of: "\n", with: " ") }
 
-        let descriptionDict: [String: [String]] = [
-            "Height": [pokemon.height.description],
-            "Weight": [pokemon.weight.description],
-            "Abilities": abilities,
-            "Base experience": [pokemon.baseExperience.description],
-            "Types": types,
-            "Species": [pokemon.species.name.capitalizingFirstLetter()],
-            "Moves": moves
+        let descriptionDict: [(String, [String])] = [
+            ("Height", [pokemon.height.description]),
+            ("Weight", [pokemon.weight.description]),
+            ("Base experience", [pokemon.baseExperience.description]),
+            ("Species", [pokemon.species.name.capitalizingFirstLetter()].sorted(by: { $0 < $1 })),
+            ("Abilities", abilities.sorted(by: { $0 < $1 })),
+            ("Types", types.sorted(by: { $0 < $1 })),
+            ("Moves", moves.sorted(by: { $0 < $1 }))
         ]
 
-        let test = descriptionDict
-            .sorted(by: { $0.key < $1.key })
-            .map { ($0, $1) }
-        description.value = test
+        let resultDescription = descriptionDict.map { ($0, $1) }
+
+        pokemonViewModel.value = PokemonViewModel(name: pokemon.name,
+                                                  imageUrl: URL(string: imageUrlString),
+                                                  description: resultDescription)
     }
 }

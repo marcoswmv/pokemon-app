@@ -69,7 +69,17 @@ final class ListViewModel: Networking {
                                                                 name: pokemon.name,
                                                                 order: pokemon.order,
                                                                 imageUrl: imageUrl) { isFavorite in
-                        print("\(isFavorite)")
+                        if isFavorite,
+                           let pokemonData = try? JSONEncoder().encode(pokemon) {
+                            self.uploadPokemon(urlString: Text.dummyAPI, bodyData: pokemonData) { result in
+                                switch result {
+                                case .success(let response):
+                                    print(response)
+                                case .failure(let error):
+                                    self.error.value = error
+                                }
+                            }
+                        }
                     }
                     if !(self.items.value?.contains(where: { $0.id == pokemonViewModel.id }) ?? false) {
                         self.items.value?.append(pokemonViewModel)

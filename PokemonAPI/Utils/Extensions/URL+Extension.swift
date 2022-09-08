@@ -8,7 +8,6 @@
 import Foundation
 
 extension URL {
-
     mutating func appendQueryItem(name: String, value: String?) {
         guard var urlComponents = URLComponents(string: absoluteString) else { return }
         urlComponents.queryItems = [URLQueryItem(name: name, value: value)]

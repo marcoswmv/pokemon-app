@@ -55,10 +55,10 @@ final class ListViewController: UIViewController {
     private func setupTableView() {
         view.addSubview(tableView)
 
-        tableView.frame = CGRect(x: 0.0,
-                                 y: 0.0,
-                                 width: Appearance.screenSize.width,
-                                 height: Appearance.screenSize.height)
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(PokemonTableViewCell.self, forCellReuseIdentifier: PokemonTableViewCell.identifier)

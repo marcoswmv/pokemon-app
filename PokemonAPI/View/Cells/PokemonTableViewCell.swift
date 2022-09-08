@@ -41,7 +41,7 @@ final class PokemonTableViewCell: UITableViewCell {
 
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
+        label.textAlignment = .left
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: Appearance.nameFontSize)
@@ -100,7 +100,7 @@ final class PokemonTableViewCell: UITableViewCell {
         favoriteButton.snp.makeConstraints { make in
             make.size.equalTo(30)
             make.centerY.equalToSuperview()
-            make.leading.greaterThanOrEqualTo(nameLabel.snp.trailing).offset(Appearance.contentSpacement)
+            make.leading.equalTo(nameLabel.snp.trailing).offset(Appearance.contentSpacement)
             make.trailing.equalToSuperview().offset(-Appearance.contentSpacement)
         }
 
@@ -119,7 +119,9 @@ final class PokemonTableViewCell: UITableViewCell {
 extension PokemonTableViewCell {
     func fill(with viewModel: PokemonCellViewModel) {
         self.viewModel = viewModel
+
         loaderView.startAnimating()
+
         downloadTask = pictureImageView.kf.setImage(with: viewModel.imageUrl, options: [.loadDiskFileSynchronously], completionHandler: { _ in
             self.loaderView.stopAnimating()
         })
