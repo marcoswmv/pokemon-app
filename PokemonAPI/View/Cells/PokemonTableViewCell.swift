@@ -9,9 +9,12 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class PokemonTableViewCell: UITableViewCell {
+final class PokemonTableViewCell: UITableViewCell {
 
-    var downloadTask: DownloadTask?
+    private var downloadTask: DownloadTask?
+    private var viewModel: PokemonCellViewModel?
+
+    private var isFavorite: Bool = false
 
     private lazy var innerContentView: UIView = {
         UIView()
@@ -26,6 +29,14 @@ class PokemonTableViewCell: UITableViewCell {
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = Appearance.cornerRadius
         return imageView
+    }()
+
+    private lazy var favoriteButton: UIButton = {
+        let button = UIButton()
+        button.setImage(Appearance.star, for: .normal)
+        button.contentVerticalAlignment = .fill
+        button.contentHorizontalAlignment = .fill
+        return button
     }()
 
     private lazy var nameLabel: UILabel = {
@@ -65,6 +76,7 @@ class PokemonTableViewCell: UITableViewCell {
         contentView.addSubview(innerContentView)
         innerContentView.addSubview(pictureImageView)
         innerContentView.addSubview(nameLabel)
+        innerContentView.addSubview(favoriteButton)
 
         pictureImageView.addSubview(loaderView)
     }
@@ -83,6 +95,12 @@ class PokemonTableViewCell: UITableViewCell {
 
         nameLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
+        }
+
+        favoriteButton.snp.makeConstraints { make in
+            make.size.equalTo(30)
+            make.centerY.equalToSuperview()
+            make.leading.greaterThanOrEqualTo(nameLabel.snp.trailing).offset(Appearance.contentSpacement)
             make.trailing.equalToSuperview().offset(-Appearance.contentSpacement)
         }
 
@@ -90,15 +108,24 @@ class PokemonTableViewCell: UITableViewCell {
             make.center.equalToSuperview()
         }
     }
+
+    @objc private func setFavoriteStatus(sender: UIButton) {
+        isFavorite.toggle()
+        viewModel?.handleFavoriteSetting(isFavorite)
+        favoriteButton.setImage(isFavorite ? Appearance.filledStar : Appearance.star, for: .normal)
+    }
 }
 
 extension PokemonTableViewCell {
     func fill(with viewModel: PokemonCellViewModel) {
+        self.viewModel = viewModel
         loaderView.startAnimating()
         downloadTask = pictureImageView.kf.setImage(with: viewModel.imageUrl, options: [.loadDiskFileSynchronously], completionHandler: { _ in
             self.loaderView.stopAnimating()
         })
         nameLabel.text = viewModel.name.uppercased()
         nameLabel.sizeToFit()
+
+        favoriteButton.addTarget(self, action: #selector(setFavoriteStatus), for: .touchUpInside)
     }
 }

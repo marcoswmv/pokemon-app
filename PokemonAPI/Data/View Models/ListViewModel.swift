@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ListViewModel: Networking {
+final class ListViewModel: Networking {
 
     private let dispatchGroup: DispatchGroup = DispatchGroup()
 
@@ -68,7 +68,9 @@ class ListViewModel: Networking {
                     let pokemonViewModel = PokemonCellViewModel(id: pokemon.id,
                                                                 name: pokemon.name,
                                                                 order: pokemon.order,
-                                                                imageUrl: imageUrl)
+                                                                imageUrl: imageUrl) { isFavorite in
+                        print("\(isFavorite)")
+                    }
                     if !(self.items.value?.contains(where: { $0.id == pokemonViewModel.id }) ?? false) {
                         self.items.value?.append(pokemonViewModel)
                     }

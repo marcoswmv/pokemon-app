@@ -8,7 +8,7 @@
 import UIKit
 import Kingfisher
 
-class DetailViewController: UIViewController {
+final class DetailViewController: UIViewController {
 
     private let viewModel: DetailViewModel
 
@@ -18,13 +18,10 @@ class DetailViewController: UIViewController {
         return imageView
     }()
 
-    private lazy var nameLabel: UILabel = {
-        let label = UILabel()
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: Appearance.detailNameFontSize)
-        return label
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.allowsSelection = false
+        return tableView
     }()
 
     init(viewModel: DetailViewModel) {
@@ -39,6 +36,7 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupTableView()
         bindViewModel()
         viewModel.fetchPokemon()
     }
@@ -47,16 +45,30 @@ class DetailViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         view.addSubview(pictureImageView)
+        view.addSubview(tableView)
 
         makeConstraints()
     }
-
+    
     private func makeConstraints() {
         pictureImageView.snp.makeConstraints { make in
             make.size.equalTo(Appearance.detailImageSize)
             make.centerX.equalToSuperview()
             make.top.equalToSuperview().offset(100.0)
         }
+
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(pictureImageView.snp.bottom).offset(5.0)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+    }
+
+    private func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: UITableViewCell.identifier)
     }
 
     private func bindViewModel() {
@@ -71,6 +83,11 @@ class DetailViewController: UIViewController {
             }
         }
 
+        viewModel.description.bind { desc in
+            guard desc != nil else { return }
+            self.reloadTableView()
+        }
+
         viewModel.error.bind { error in
             guard let error = error else { return }
             DispatchQueue.main.async {
@@ -78,5 +95,59 @@ class DetailViewController: UIViewController {
             }
         }
     }
+
+    private func reloadTableView() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
 }
 
+// MARK: - Description table view Data source and Delegate
+
+extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        viewModel.description.value?.count ?? 0
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let descriptionArray = viewModel.description.value else { return nil }
+
+        let contentView = UIView()
+        contentView.backgroundColor = .systemGray6
+
+        let headerLabel = UILabel()
+        headerLabel.frame = CGRect(origin: .zero,
+                                   size: CGSize(width: Appearance.screenSize.width,
+                                                height: Appearance.sectionHeaderHeight))
+        headerLabel.textAlignment = .center
+        headerLabel.textColor = .gray
+        headerLabel.adjustsFontSizeToFitWidth = true
+        headerLabel.text = descriptionArray[section].0
+
+        contentView.addSubview(headerLabel)
+
+        return contentView
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let descriptionArray = viewModel.description.value else { return 0 }
+        return descriptionArray[section].1.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.identifier) else {
+            return UITableViewCell()
+        }
+
+        if let descriptionArray = viewModel.description.value {
+            let text = descriptionArray[indexPath.section].1[indexPath.row]
+            cell.textLabel?.numberOfLines = 0
+            cell.textLabel?.lineBreakMode = .byWordWrapping
+            cell.textLabel?.text = text
+        }
+        
+        return cell
+    }
+}

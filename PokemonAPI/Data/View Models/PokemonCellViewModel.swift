@@ -8,11 +8,16 @@
 import Foundation
 
 struct PokemonCellViewModel: Comparable {
-
+    static func == (lhs: PokemonCellViewModel, rhs: PokemonCellViewModel) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     let id: Int
     let name: String
     let order: Int
     let imageUrl: URL
+
+    var handleFavoriteSetting: ((Bool) -> Void)
 
     static func < (lhs: PokemonCellViewModel, rhs: PokemonCellViewModel) -> Bool {
         lhs.order < rhs.order

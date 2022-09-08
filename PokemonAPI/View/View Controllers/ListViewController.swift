@@ -106,10 +106,10 @@ extension ListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if let viewModels = viewModel.items.value,
-           let pokemonModel = self.viewModel.getModel(by: viewModels[indexPath.row].id) {
+           let pokemonModel = viewModel.getModel(by: viewModels[indexPath.row].id) {
             let detailViewModel = DetailViewModel(pokemonId: pokemonModel.id)
             let detailViewController = DetailViewController(viewModel: detailViewModel)
-            navigationController?.pushViewController(detailViewController, animated: true)
+            self.navigationController?.pushViewController(detailViewController, animated: true)
         }
     }
 

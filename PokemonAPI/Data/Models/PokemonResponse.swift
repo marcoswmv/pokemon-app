@@ -18,7 +18,7 @@ struct PokemonResponse: Codable, Equatable {
 }
 
 struct PokemonResource: Codable, Equatable {
-    let name: String
+    var name: String
     let url: String
 
     static func == (lhs: PokemonResource, rhs: PokemonResource) -> Bool {

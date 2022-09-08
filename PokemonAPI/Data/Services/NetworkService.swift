@@ -14,16 +14,20 @@ extension Networking {
         NetworkService.shared.request(page: page, completionHandler)
     }
 
+    func requestPokemon(by id: Int, _ completionHandler: @escaping PokemonResponseBlock) {
+        NetworkService.shared.request(endpoint: "\(id)", completionHandler)
+    }
+
     func requestPokemon(by urlString: String, _ completionHandler: @escaping PokemonResponseBlock) {
         NetworkService.shared.request(urlString: urlString, completionHandler)
     }
 
-    func requestPokemon(by id: Int, _ completionHandler: @escaping PokemonResponseBlock) {
-        NetworkService.shared.request(endpoint: "\(id)", completionHandler)
+    func requestDescription(by urlString: String, _ completionHandler: @escaping DescriptionResponseBlock) {
+        NetworkService.shared.request(urlString: urlString, completionHandler)
     }
 }
 
-private class NetworkService {
+final private class NetworkService {
 
     static let shared = NetworkService()
 
@@ -100,4 +104,8 @@ private enum NetworkResponse: Error {
     case outdated
     case failed
     case unableToDecode(description: String)
+}
+
+enum AppError: Error {
+    case unableToDecode
 }

@@ -13,11 +13,12 @@ struct Pokemon: Codable {
     let name: String
     let height: Int
     let weight: Int
-    let abilities: [Ability]
-    let forms: [PokemonResource]
+    let baseExperience: Int
+    let abilities: [AbilityResource]
     let sprites: Sprite
     let types: [PokemonType]
     let species: PokemonResource
+    let moves: [Move]
 
     enum CodingKeys: String, CodingKey {
         case id = "id"
@@ -26,9 +27,10 @@ struct Pokemon: Codable {
         case height = "height"
         case weight = "weight"
         case abilities = "abilities"
-        case forms = "forms"
         case sprites = "sprites"
         case species = "species"
         case types = "types"
+        case moves = "moves"
+        case baseExperience = "base_experience"
     }
 }

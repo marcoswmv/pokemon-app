@@ -17,7 +17,7 @@ struct Appearance {
     static let borderWidth: CGFloat = 1.0
 
     static let imageSize: CGFloat = 180.0
-    static let detailImageSize: CGFloat = 350.0
+    static let detailImageSize: CGFloat = 300.0
 
     static let nameLabelHeight: CGFloat = 24.0
     static let priceLabelHeight: CGFloat = 18.0
@@ -26,8 +26,12 @@ struct Appearance {
 
     static let detailNameFontSize: CGFloat = 26.0
     static let nameFontSize: CGFloat = 22.0
-    static let priceFontSize: CGFloat = 22.0
+
+    static let sectionHeaderHeight: CGFloat = 28.0
 
     static let descendingIcon: UIImage = UIImage(systemName: "arrow.down")!
     static let ascendingIcon: UIImage = UIImage(systemName: "arrow.up")!
+
+    static let filledStar: UIImage = UIImage(systemName: "star.fill")!
+    static let star: UIImage = UIImage(systemName: "star")!
 }
