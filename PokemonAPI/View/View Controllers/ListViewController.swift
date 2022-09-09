@@ -58,7 +58,7 @@ final class ListViewController: UIViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
+
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(PokemonTableViewCell.self, forCellReuseIdentifier: PokemonTableViewCell.identifier)
