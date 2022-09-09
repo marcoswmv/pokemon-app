@@ -7,12 +7,6 @@
 
 import UIKit
 
-struct PokemonViewModel {
-    let name: String
-    let imageUrl: URL?
-    let description: [(String, [String])]
-}
-
 final class DetailViewModel: Networking {
 
     private let pokemonDispatchGroup: DispatchGroup = DispatchGroup()
@@ -23,14 +17,14 @@ final class DetailViewModel: Networking {
     private var abilities: [String] = []
     private var moves: [String] = []
 
-    var pokemonViewModel: Observable<PokemonViewModel> = Observable(nil)
+    var pokemonDetailViewModel: Observable<PokemonDetailViewModel> = Observable(nil)
     var error: Observable<Error> = Observable(nil)
 
     init(pokemonId: Int) {
         self.pokemonId = pokemonId
     }
 
-    func fetchPokemon() {
+    func fetchPokemon(completionHandler: (() -> Void)? = nil) {
         pokemonDispatchGroup.enter()
         requestPokemon(by: pokemonId) { [weak self] result in
             guard let self = self else { return }
@@ -44,11 +38,11 @@ final class DetailViewModel: Networking {
         }
 
         pokemonDispatchGroup.notify(queue: .global(qos: .background)) {
-            self.fetchPokemonsDescription()
+            self.fetchPokemonsDescription(completionHandler: completionHandler)
         }
     }
 
-    private func fetchPokemonsDescription() {
+    private func fetchPokemonsDescription(completionHandler: (() -> Void)? = nil) {
         guard let pokemon = pokemon else { return }
 
         fetchAbilities(for: pokemon)
@@ -56,6 +50,7 @@ final class DetailViewModel: Networking {
 
         dispatchGroup.notify(queue: .main) {
             self.processDescription()
+            completionHandler?()
         }
     }
 
@@ -115,7 +110,7 @@ final class DetailViewModel: Networking {
 
         let resultDescription = descriptionDict.map { ($0, $1) }
 
-        pokemonViewModel.value = PokemonViewModel(name: pokemon.name,
+        pokemonDetailViewModel.value = PokemonDetailViewModel(name: pokemon.name,
                                                   imageUrl: URL(string: imageUrlString),
                                                   description: resultDescription)
     }

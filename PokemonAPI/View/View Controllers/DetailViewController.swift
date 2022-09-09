@@ -97,7 +97,7 @@ final class DetailViewController: UIViewController {
     }
 
     private func bindViewModel() {
-        viewModel.pokemonViewModel.bind { pokemon in
+        viewModel.pokemonDetailViewModel.bind { pokemon in
             guard let pokemon = pokemon else { return }
 
             DispatchQueue.main.async {
@@ -122,11 +122,11 @@ final class DetailViewController: UIViewController {
 extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        viewModel.pokemonViewModel.value?.description.count ?? 0
+        viewModel.pokemonDetailViewModel.value?.description.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let descriptionArray = viewModel.pokemonViewModel.value?.description else { return nil }
+        guard let descriptionArray = viewModel.pokemonDetailViewModel.value?.description else { return nil }
 
         let contentView = UIView()
         contentView.backgroundColor = .systemGray6
@@ -146,7 +146,7 @@ extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let descriptionArray = viewModel.pokemonViewModel.value?.description else { return 0 }
+        guard let descriptionArray = viewModel.pokemonDetailViewModel.value?.description else { return 0 }
         return descriptionArray[section].1.count
     }
 
@@ -155,7 +155,7 @@ extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
 
-        if let descriptionArray = viewModel.pokemonViewModel.value?.description {
+        if let descriptionArray = viewModel.pokemonDetailViewModel.value?.description {
             let text = descriptionArray[indexPath.section].1[indexPath.row]
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.lineBreakMode = .byWordWrapping

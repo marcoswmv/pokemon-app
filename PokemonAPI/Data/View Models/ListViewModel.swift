@@ -26,21 +26,21 @@ final class ListViewModel: Networking {
         print(self)
     }
 
-    func fetchPokemonsList(for page: Int = 0) {
+    func fetchPokemonsList(for page: Int = 0, completionHandler: (() -> Void)? = nil) {
         requestPokemonsList(page: page) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
             case .success(let pokemons):
                 self.pokemonsResponse = pokemons
-                self.fetchPokemonsData()
+                self.fetchPokemonsData(completionHandler: completionHandler)
             case .failure(let error):
                 self.error.value = error
             }
         }
     }
 
-    private func fetchPokemonsData() {
+    private func fetchPokemonsData(completionHandler: (() -> Void)? = nil) {
         pokemonsResponse?.results.forEach({ resource in
             self.dispatchGroup.enter()
 
@@ -60,6 +60,7 @@ final class ListViewModel: Networking {
         })
 
         dispatchGroup.notify(queue: .main) {
+            var localPokemonViewModels: [PokemonCellViewModel] = []
             self.pokemons
                 .sorted(by: { $0.order < $1.order })
                 .forEach { pokemon in
@@ -81,10 +82,12 @@ final class ListViewModel: Networking {
                             }
                         }
                     }
-                    if !(self.items.value?.contains(where: { $0.id == pokemonViewModel.id }) ?? false) {
-                        self.items.value?.append(pokemonViewModel)
+                    if !localPokemonViewModels.contains(where: { $0.id == pokemonViewModel.id })  {
+                        localPokemonViewModels.append(pokemonViewModel)
                     }
                 }
+            self.items.value = localPokemonViewModels
+            completionHandler?()
         }
     }
 
